@@ -22,14 +22,20 @@ const app = express();
 app.use(express.json());
 
 // Enable CORS so the React frontend can communicate with this API
-const allowedOrigins = [
-  "http://localhost:5173",
-  process.env.CLIENT_URL
-].filter(Boolean); // removes undefined if CLIENT_URL is not set
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      const allowed = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        process.env.CLIENT_URL,
+      ].filter(Boolean);
+      if (!origin || allowed.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(null, origin);
+      }
+    },
     credentials: true,
   })
 );
