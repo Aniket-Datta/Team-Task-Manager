@@ -69,7 +69,7 @@ This application is configured for seamless deployment on Railway.
 
 ### 2. Railway Backend Setup
 1. Log in to [Railway](https://railway.app/) and create a new project from your GitHub repository.
-2. Select your repository and add a **New Service**.
+2. Select your repository and click **Add Service** → **GitHub Repo** (same repo).
 3. **Configure the Backend Service**:
    - **Root Directory**: `/server`
    - **Build Command**: `npm install`
@@ -77,24 +77,41 @@ This application is configured for seamless deployment on Railway.
 4. Add the following **Environment Variables**:
    - `PORT`: `5000`
    - `MONGO_URI`: `your_atlas_connection_string`
-   - `JWT_SECRET`: `your_jwt_secret`
-   - `CLIENT_URL`: `https://your-frontend-url.up.railway.app` (Add this *after* you deploy the frontend)
-5. Generate a domain for your backend service in Railway Settings.
+   - `JWT_SECRET` (required — see note 1)
+   - `JWT_EXPIRES_IN`: `7d`
+   - `CLIENT_URL`: `https://your-frontend-url.up.railway.app` (Add this *after* deploying frontend)
+5. Go to **Settings** → **Networking** → **Generate Domain**. Copy the URL.
 
 ### 3. Railway Frontend Setup
-1. In the same Railway project, click **New** -> **GitHub Repo** (select the same repo).
+1. In the same project, click **New** → **GitHub Repo** (select the same repo).
 2. **Configure the Frontend Service**:
    - **Root Directory**: `/client`
    - **Build Command**: `npm install && npm run build`
    - **Start Command**: `npm run preview -- --host 0.0.0.0 --port $PORT`
 3. Add the following **Environment Variable**:
-   - `VITE_API_URL`: `https://your-backend-url.up.railway.app/api` (Use the domain generated in Step 2)
-4. Generate a domain for your frontend service.
+   - `VITE_API_URL`: `https://your-backend-url.up.railway.app/api` (the backend URL from Step 2)
+4. Go to **Settings** → **Networking** → set **Target port** to `8080` and click **Generate Domain**.
+5. Copy the frontend URL, go back to the backend service **Variables**, and set `CLIENT_URL` to this URL.
 
-### 4. API Testing
-To verify your backend is running correctly on Railway, open your backend URL in the browser:
-`https://your-backend-url.up.railway.app/`
-You should see:
-> `Team Task Manager API is running`
+> **Note 1 (JWT_SECRET):** Railway environment variables override `.env` file values. If you don't set `JWT_SECRET` in Railway Variables, the app will crash with `secretOrPrivateKey must have a value`. Always set it manually.
+>
+> **Note 2 (CORS):** The server is configured to allow both `localhost:5173` and the production `CLIENT_URL`. No additional configuration needed.
+>
+> **Note 3 (Vite Preview):** If you see `Blocked request` error, add `preview.allowedHosts: true` to `client/vite.config.js` (already included in this repo).
 
-Once both are deployed, open your frontend URL, create an account, and start managing tasks!
+### 4. Verify
+- Open your backend URL — you should see: `Team Task Manager API is running`
+- Open your frontend URL — you should be able to register/login and use the app.
+- If you see a **CORS error**, make sure `CLIENT_URL` is set correctly on the backend Variables.
+- If you see a **500 error**, check the Railway backend **Logs** tab for the actual error message.
+
+---
+
+### Example Deployment (Live)
+
+| Service | URL |
+|---|---|
+| Backend | `https://team-task-manager-production-8c0b.up.railway.app` |
+| Frontend | `https://gregarious-fulfillment-production-5281.up.railway.app` |
+
+Replace the URLs above with your own Railway-generated domains after deployment.
