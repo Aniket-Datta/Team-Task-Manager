@@ -37,4 +37,19 @@ const loginSchema = z.object({
     .min(1, "Password is required"),
 });
 
-module.exports = { signupSchema, loginSchema };
+// Validation schema for profile update
+const updateProfileSchema = z.object({
+  name: z
+    .string()
+    .min(1, "Name is required")
+    .max(50, "Name must be less than 50 characters")
+    .optional(),
+  email: z
+    .string()
+    .email("Please provide a valid email")
+    .optional(),
+}).refine(data => data.name || data.email, {
+  message: "At least one field (name or email) must be provided",
+});
+
+module.exports = { signupSchema, loginSchema, updateProfileSchema };

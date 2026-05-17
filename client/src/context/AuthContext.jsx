@@ -112,6 +112,7 @@ export const AuthProvider = ({ children }) => {
   // Values available to all components via useAuth()
   const value = {
     user,
+    setUser,
     token,
     loading,
     login,

@@ -5,7 +5,7 @@
 const bcrypt = require("bcryptjs");
 const User = require("../models/User");
 const generateToken = require("../utils/generateToken");
-const { signupSchema, loginSchema } = require("../validations/authValidation");
+const { signupSchema, loginSchema, updateProfileSchema } = require("../validations/authValidation");
 
 // ---- SIGNUP ----
 // POST /api/auth/signup
@@ -119,4 +119,44 @@ const getMe = async (req, res) => {
   }
 };
 
-module.exports = { signup, login, getMe };
+// ---- UPDATE PROFILE ----
+// PUT /api/auth/profile (Protected)
+const updateProfile = async (req, res) => {
+  try {
+    const validationResult = updateProfileSchema.safeParse(req.body);
+    if (!validationResult.success) {
+      const errorMessage = validationResult.error.errors[0].message;
+      return res.status(400).json({ message: errorMessage });
+    }
+
+    const { name, email } = validationResult.data;
+
+    if (email && email !== req.user.email) {
+      const existingUser = await User.findOne({ email });
+      if (existingUser) {
+        return res.status(400).json({ message: "Email already in use" });
+      }
+    }
+
+    const updatedUser = await User.findByIdAndUpdate(
+      req.user._id,
+      { ...(name && { name }), ...(email && { email }) },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    res.status(200).json({
+      message: "Profile updated successfully",
+      user: {
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+      },
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error.message);
+    res.status(500).json({ message: "Server error during profile update" });
+  }
+};
+
+module.exports = { signup, login, getMe, updateProfile };
