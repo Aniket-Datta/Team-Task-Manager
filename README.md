@@ -107,11 +107,10 @@ This application is configured for seamless deployment on Railway.
 
 ---
 
-### Example Deployment (Live)
+### Deployment (Live)
 
 | Service | URL |
 |---|---|
 | Backend | `https://team-task-manager-production-8c0b.up.railway.app` |
 | Frontend | `https://gregarious-fulfillment-production-5281.up.railway.app` |
 
-Replace the URLs above with your own Railway-generated domains after deployment.
