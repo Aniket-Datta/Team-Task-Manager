@@ -2,6 +2,10 @@
 
 A robust, full-stack task management application built with the MERN stack (MongoDB, Express, React, Node.js) and Tailwind CSS. Features role-based access control, task status tracking, real-time commenting, and a beautiful modern SaaS UI.
 
+## Demo
+
+<video src="./Demo%20Video.mp4" controls width="100%"></video>
+
 ## Features
 
 - **Role-Based Access Control**: Admins can manage projects and tasks; Members can view assigned work and update status.
