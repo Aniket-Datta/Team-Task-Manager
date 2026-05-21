@@ -4,7 +4,7 @@ A robust, full-stack task management application built with the MERN stack (Mong
 
 ## Demo
 
-<video src="./Demo%20Video.mp4" controls width="100%"></video>
+![Demo](./demo.gif)
 
 ## Features
 
